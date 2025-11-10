@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 en Raya - Juego Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 30px auto;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: #f0f0f0;
+            border: 3px solid #667eea;
+            border-radius: 8px;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .cell:hover:not(.occupied) {
+            background: #e0e0ff;
+            transform: scale(1.05);
+        }
+
+        .cell.occupied {
+            cursor: not-allowed;
+        }
+
+        .cell.x {
+            color: #667eea;
+        }
+
+        .cell.o {
+            color: #764ba2;
+        }
+
+        .game-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .player-card {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+
+        .player-card.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            margin-top: 10px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .cell {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 3 en Raya</h1>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('nuevo-jugador', this)">Nuevo Jugador</button>
+            <button class="tab" onclick="showTab('nueva-partida', this)">Nueva Partida</button>
+            <button class="tab" onclick="showTab('jugar', this)">Jugar</button>
+            <button class="tab" onclick="showTab('partidas-activas', this)">Partidas Activas</button>
+            <button class="tab" onclick="showTab('estadisticas', this)">Estadísticas</button>
+        </div>
+
+        <!-- Tab: Nuevo Jugador -->
+        <div id="nuevo-jugador" class="tab-content active">
+            <h2>Crear Nuevo Jugador</h2>
+            <div id="mensaje-jugador"></div>
+            <div class="form-group">
+                <label for="nombre-jugador">Nombre del Jugador:</label>
+                <input type="text" id="nombre-jugador" placeholder="Ingresa el nombre">
+            </div>
+            <button onclick="crearJugador()">Crear Jugador</button>
+
+            <h3 style="margin-top: 30px;">Jugadores Registrados</h3>
+            <div id="lista-jugadores"></div>
+        </div>
+
+        <!-- Tab: Nueva Partida -->
+        <div id="nueva-partida" class="tab-content">
+            <h2>Iniciar Nueva Partida</h2>
+            <div id="mensaje-partida"></div>
+            <div class="form-group">
+                <label for="jugador1-select">Jugador 1 (X):</label>
+                <select id="jugador1-select">
+                    <option value="">Selecciona un jugador</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="jugador2-select">Jugador 2 (O):</label>
+                <select id="jugador2-select">
+                    <option value="">Selecciona un jugador</option>
+                </select>
+            </div>
+            <button onclick="iniciarPartida()">Iniciar Partida</button>
+        </div>
+
+        <!-- Tab: Jugar -->
+        <div id="jugar" class="tab-content">
+            <div id="juego-container" style="display: none;">
+                <h2 style="text-align: center;">Partida en Curso</h2>
+                <div id="mensaje-juego"></div>
+                
+                <div class="player-info">
+                    <div class="player-card" id="player1-card">
+                        <h3 id="player1-name">Jugador 1</h3>
+                        <p>Símbolo: X</p>
+                    </div>
+                    <div class="player-card" id="player2-card">
+                        <h3 id="player2-name">Jugador 2</h3>
+                        <p>Símbolo: O</p>
+                    </div>
+                </div>
+
+                <div class="game-info">
+                    <h3 id="turno-actual">Turno: X</h3>
+                </div>
+
+                <div class="game-board" id="tablero">
+                    <!-- Las celdas se generarán dinámicamente -->
+                </div>
+
+                <div class="game-controls">
+                    <button onclick="reiniciarJuego()">Nueva Partida</button>
+                    <button onclick="guardarYSalir()">Guardar y Salir</button>
+                </div>
+            </div>
+            <div id="sin-partida" style="text-align: center; padding: 40px;">
+                <p style="font-size: 1.2em; color: #666;">No hay ninguna partida activa. Inicia una nueva partida en la pestaña "Nueva Partida".</p>
+            </div>
+        </div>
+
+        <!-- Tab: Partidas Activas -->
+        <div id="partidas-activas" class="tab-content">
+            <h2>Partidas en Curso</h2>
+            <button onclick="cargarPartidasActivas()" style="margin-bottom: 20px;">Actualizar Lista</button>
+            <div id="lista-partidas-activas"></div>
+        </div>
+
+        <!-- Tab: Estadísticas -->
+        <div id="estadisticas" class="tab-content">
+            <h2>Estadísticas de Jugadores</h2>
+            <button onclick="cargarEstadisticas()" style="margin-bottom: 20px;">Actualizar Estadísticas</button>
+            <div id="tabla-estadisticas"></div>
+        </div>
+    </div>
+
+    <script>
+        let partidaActual = null;
+        let jugadoresData = [];
+
+        // Funciones de navegación
+        function showTab(tabName, element) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (element) {
+                element.classList.add('active');
+            }
+            document.getElementById(tabName).classList.add('active');
+
+            // Cargar datos según la pestaña
+            if (tabName === 'nuevo-jugador') {
+                cargarJugadores();
+            } else if (tabName === 'nueva-partida') {
+                cargarSelectJugadores();
+            } else if (tabName === 'partidas-activas') {
+                cargarPartidasActivas();
+            } else if (tabName === 'estadisticas') {
+                cargarEstadisticas();
+            }
+        }
+
+        // Funciones de jugadores
+        async function crearJugador() {
+            const nombre = document.getElementById('nombre-jugador').value.trim();
+            
+            if (!nombre) {
+                mostrarMensaje('mensaje-jugador', 'Por favor ingresa un nombre', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/jugadores', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({nombre})
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    mostrarMensaje('mensaje-jugador', data.mensaje, 'success');
+                    document.getElementById('nombre-jugador').value = '';
+                    cargarJugadores();
+                } else {
+                    mostrarMensaje('mensaje-jugador', data.error, 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('mensaje-jugador', 'Error al crear jugador', 'error');
+            }
+        }
+
+        async function cargarJugadores() {
+            try {
+                const response = await fetch('/api/jugadores');
+                jugadoresData = await response.json();
+
+                const lista = document.getElementById('lista-jugadores');
+                
+                if (jugadoresData.length === 0) {
+                    lista.innerHTML = '<p style="color: #666; margin-top: 20px;">No hay jugadores registrados aún.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>ID</th><th>Nombre</th><th>Fecha de Registro</th></tr></thead><tbody>';
+                
+                jugadoresData.forEach(j => {
+                    const fecha = new Date(j.fecha_creacion).toLocaleDateString('es-ES');
+                    html += `<tr><td>${j.id}</td><td>${j.nombre}</td><td>${fecha}</td></tr>`;
+                });
+                
+                html += '</tbody></table>';
+                lista.innerHTML = html;
+            } catch (error) {
+                console.error('Error al cargar jugadores:', error);
+            }
+        }
+
+        async function cargarSelectJugadores() {
+            if (jugadoresData.length === 0) {
+                await cargarJugadores();
+            }
+
+            const select1 = document.getElementById('jugador1-select');
+            const select2 = document.getElementById('jugador2-select');
+
+            let options = '<option value="">Selecciona un jugador</option>';
+            jugadoresData.forEach(j => {
+                options += `<option value="${j.id}">${j.nombre}</option>`;
+            });
+
+            select1.innerHTML = options;
+            select2.innerHTML = options;
+        }
+
+        async function iniciarPartida() {
+            const j1 = document.getElementById('jugador1-select').value;
+            const j2 = document.getElementById('jugador2-select').value;
+
+            if (!j1 || !j2) {
+                mostrarMensaje('mensaje-partida', 'Debes seleccionar ambos jugadores', 'error');
+                return;
+            }
+
+            if (j1 === j2) {
+                mostrarMensaje('mensaje-partida', 'Los jugadores deben ser diferentes', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/partida/nueva', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({jugador1_id: j1, jugador2_id: j2})
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    partidaActual = data;
+                    mostrarMensaje('mensaje-partida', 'Partida iniciada exitosamente', 'success');
+                    
+                    setTimeout(() => {
+                        const tabJugar = document.querySelectorAll('.tab')[2];
+                        showTab('jugar', tabJugar);
+                        cargarJuego();
+                    }, 1000);
+                } else {
+                    mostrarMensaje('mensaje-partida', data.error, 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('mensaje-partida', 'Error al iniciar partida', 'error');
+            }
+        }
+
+        function cargarJuego() {
+            if (!partidaActual) {
+                document.getElementById('juego-container').style.display = 'none';
+                document.getElementById('sin-partida').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('juego-container').style.display = 'block';
+            document.getElementById('sin-partida').style.display = 'none';
+
+            document.getElementById('player1-name').textContent = partidaActual.jugador1.nombre;
+            document.getElementById('player2-name').textContent = partidaActual.jugador2.nombre;
+
+            actualizarTablero();
+        }
+
+        function actualizarTablero() {
+            const estado = partidaActual.estado;
+            const tablero = document.getElementById('tablero');
+            
+            tablero.innerHTML = '';
+            
+            estado.tablero.forEach((valor, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = valor;
+                
+                if (valor !== ' ') {
+                    cell.classList.add('occupied');
+                    cell.classList.add(valor.toLowerCase());
+                } else if (!estado.juego_terminado) {
+                    cell.onclick = () => hacerMovimiento(index);
+                }
+                
+                tablero.appendChild(cell);
+            });
+
+            // Actualizar turno
+            document.getElementById('turno-actual').textContent = `Turno: ${estado.turno_actual}`;
+            
+            // Actualizar indicador de turno
+            if (estado.turno_actual === 'X') {
+                document.getElementById('player1-card').classList.add('active');
+                document.getElementById('player2-card').classList.remove('active');
+            } else {
+                document.getElementById('player1-card').classList.remove('active');
+                document.getElementById('player2-card').classList.add('active');
+            }
+
+            // Mostrar mensaje si el juego terminó
+            if (estado.juego_terminado) {
+                let mensaje = '';
+                if (estado.ganador) {
+                    const nombreGanador = estado.ganador === 'X' ? 
+                        partidaActual.jugador1.nombre : partidaActual.jugador2.nombre;
+                    mensaje = `¡${nombreGanador} (${estado.ganador}) ha ganado!`;
+                } else {
+                    mensaje = '¡Es un empate!';
+                }
+                mostrarMensaje('mensaje-juego', mensaje, 'success');
+            }
+        }
+
+        async function hacerMovimiento(posicion) {
+            try {
+                const response = await fetch(`/api/partida/${partidaActual.partida_id}/movimiento`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({posicion})
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    partidaActual.estado = data.estado;
+                    actualizarTablero();
+                } else {
+                    mostrarMensaje('mensaje-juego', data.error, 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('mensaje-juego', 'Error al realizar movimiento', 'error');
+            }
+        }
+
+        async function reiniciarJuego() {
+            if (!partidaActual) return;
+
+            const j1 = partidaActual.jugador1.id;
+            const j2 = partidaActual.jugador2.id;
+
+            try {
+                const response = await fetch('/api/partida/nueva', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({jugador1_id: j1, jugador2_id: j2})
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    partidaActual = data;
+                    document.getElementById('mensaje-juego').innerHTML = '';
+                    cargarJuego();
+                }
+            } catch (error) {
+                console.error('Error al reiniciar juego:', error);
+            }
+        }
+
+        function guardarYSalir() {
+            mostrarMensaje('mensaje-juego', 'Partida guardada correctamente', 'success');
+            setTimeout(() => {
+                partidaActual = null;
+                cargarJuego();
+            }, 1500);
+        }
+
+        async function cargarPartidasActivas() {
+            try {
+                const response = await fetch('/api/partidas/activas');
+                const partidas = await response.json();
+
+                const lista = document.getElementById('lista-partidas-activas');
+
+                if (partidas.length === 0) {
+                    lista.innerHTML = '<p style="color: #666; margin-top: 20px;">No hay partidas activas en este momento.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>ID</th><th>Jugador 1</th><th>Jugador 2</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody>';
+
+                partidas.forEach(p => {
+                    const fecha = new Date(p.fecha_inicio).toLocaleString('es-ES');
+                    html += `
+                        <tr>
+                            <td>${p.id}</td>
+                            <td>${p.jugador1_nombre}</td>
+                            <td>${p.jugador2_nombre}</td>
+                            <td>${fecha}</td>
+                            <td><button onclick="continuarPartida(${p.id})">Continuar</button></td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                lista.innerHTML = html;
+            } catch (error) {
+                console.error('Error al cargar partidas:', error);
+            }
+        }
+
+        async function continuarPartida(partidaId) {
+            try {
+                const response = await fetch(`/api/partida/${partidaId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    partidaActual = data;
+                    showTab('jugar');
+                    document.querySelectorAll('.tab')[2].click();
+                    cargarJuego();
+                }
+            } catch (error) {
+                console.error('Error al cargar partida:', error);
+            }
+        }
+
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('/api/estadisticas');
+                const stats = await response.json();
+
+                const tabla = document.getElementById('tabla-estadisticas');
+
+                if (stats.length === 0) {
+                    tabla.innerHTML = '<p style="color: #666; margin-top: 20px;">No hay estadísticas disponibles aún.</p>';
+                    return;
+                }
+
+                let html = '<table><thead><tr><th>Jugador</th><th>Partidas</th><th>Ganadas</th><th>Perdidas</th><th>Empates</th><th>% Victoria</th></tr></thead><tbody>';
+
+                stats.forEach(s => {
+                    const porcentaje = s.partidas_jugadas > 0 ? 
+                        ((s.partidas_ganadas / s.partidas_jugadas) * 100).toFixed(1) : 0;
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${s.nombre}</strong></td>
+                            <td>${s.partidas_jugadas}</td>
+                            <td style="color: #28a745;">${s.partidas_ganadas}</td>
+                            <td style="color: #dc3545;">${s.partidas_perdidas}</td>
+                            <td style="color: #ffc107;">${s.empates}</td>
+                            <td><strong>${porcentaje}%</strong></td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                tabla.innerHTML = html;
+            } catch (error) {
+                console.error('Error al cargar estadísticas:', error);
+            }
+        }
+
+        function mostrarMensaje(elementId, mensaje, tipo) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="message ${tipo}">${mensaje}</div>`;
+            
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+
+        // Cargar jugadores al inicio
+        cargarJugadores();
+    </script>
+</body>
+</html>
