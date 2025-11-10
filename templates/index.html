@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3 en Raya - Juego Completo</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -12,8 +14,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #c94b4b 0%, #4b134f 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,10 +27,23 @@
 
         h1 {
             text-align: center;
-            color: white;
+            color: #ffe5b4;
             margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.8em;
+            font-family: 'Pacifico', cursive;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: #8b4513;
+            font-family: 'Pacifico', cursive;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #654321;
+            font-weight: 600;
         }
 
         .tabs {
@@ -39,31 +54,37 @@
         }
 
         .tab {
-            padding: 12px 24px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            border-radius: 8px;
-            color: white;
+            padding: 14px 26px;
+            background: rgba(139, 69, 19, 0.3);
+            border: 2px solid #d2691e;
+            border-radius: 15px;
+            color: #ffe5b4;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 17px;
+            font-weight: 600;
             transition: all 0.3s;
+            font-family: 'Quicksand', sans-serif;
         }
 
         .tab:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(139, 69, 19, 0.5);
+            border-color: #ff8c00;
         }
 
         .tab.active {
-            background: white;
-            color: #667eea;
+            background: #d2691e;
+            color: #fff8dc;
+            border-color: #ff8c00;
+            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
         }
 
         .tab-content {
             display: none;
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #fff8dc;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 12px 35px rgba(75, 19, 79, 0.4);
+            border: 3px solid #d2691e;
         }
 
         .tab-content.active {
@@ -71,76 +92,91 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
+            margin-bottom: 10px;
+            color: #654321;
+            font-weight: 700;
+            font-size: 16px;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
+            padding: 14px;
+            border: 3px solid #d2691e;
+            border-radius: 12px;
             font-size: 16px;
+            background: #faebd7;
+            color: #654321;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ff8c00;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
         }
 
         button {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 14px 28px;
+            background: #c94b4b;
+            color: #fff8dc;
+            border: 3px solid #8b0000;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
         }
 
         button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
+            background: #a83232;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(139, 0, 0, 0.5);
         }
 
         button:disabled {
-            background: #ccc;
+            background: #c0c0c0;
+            border-color: #808080;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .game-board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 400px;
+            gap: 12px;
+            max-width: 420px;
             margin: 30px auto;
         }
 
         .cell {
             aspect-ratio: 1;
-            background: #f0f0f0;
-            border: 3px solid #667eea;
-            border-radius: 8px;
-            font-size: 3em;
+            background: #faebd7;
+            border: 4px solid #8b4513;
+            border-radius: 15px;
+            font-size: 3.2em;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(139, 69, 19, 0.3);
         }
 
         .cell:hover:not(.occupied) {
-            background: #e0e0ff;
-            transform: scale(1.05);
+            background: #ffe4b5;
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(139, 69, 19, 0.5);
         }
 
         .cell.occupied {
@@ -148,11 +184,11 @@
         }
 
         .cell.x {
-            color: #667eea;
+            color: #c94b4b;
         }
 
         .cell.o {
-            color: #764ba2;
+            color: #4b134f;
         }
 
         .game-info {
@@ -169,82 +205,94 @@
         }
 
         .player-card {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 8px;
-            min-width: 200px;
+            background: #ffe4b5;
+            padding: 18px 30px;
+            border-radius: 15px;
+            min-width: 220px;
+            border: 3px solid #d2691e;
+            box-shadow: 0 4px 12px rgba(210, 105, 30, 0.3);
         }
 
         .player-card.active {
-            background: #667eea;
-            color: white;
+            background: #ff8c00;
+            color: #fff8dc;
+            border-color: #ff6347;
+            box-shadow: 0 6px 18px rgba(255, 99, 71, 0.5);
         }
 
         .message {
-            padding: 15px;
-            border-radius: 6px;
+            padding: 16px;
+            border-radius: 12px;
             margin-bottom: 20px;
             text-align: center;
+            font-weight: 600;
+            border: 3px solid;
         }
 
         .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #98fb98;
+            color: #006400;
+            border-color: #228b22;
         }
 
         .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #ffb6c1;
+            color: #8b0000;
+            border-color: #dc143c;
         }
 
         .message.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: #add8e6;
+            color: #00008b;
+            border-color: #4169e1;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            border: 3px solid #d2691e;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         th, td {
-            padding: 12px;
+            padding: 14px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 2px solid #d2691e;
+            font-weight: 600;
         }
 
         th {
-            background: #667eea;
-            color: white;
+            background: #d2691e;
+            color: #fff8dc;
+            font-weight: 700;
         }
 
         tr:hover {
-            background: #f5f5f5;
+            background: #ffe4b5;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .game-controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
             margin-top: 20px;
             flex-wrap: wrap;
         }
 
         .stats-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
+            background: #ffe4b5;
+            padding: 22px;
+            border-radius: 15px;
             margin-bottom: 20px;
+            border: 3px solid #d2691e;
         }
 
         .stats-grid {
@@ -256,37 +304,40 @@
 
         .stat-item {
             text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 22px;
+            background: #faebd7;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+            border: 3px solid #d2691e;
         }
 
         .stat-value {
-            font-size: 2em;
+            font-size: 2.2em;
             font-weight: bold;
-            color: #667eea;
+            color: #c94b4b;
         }
 
         .stat-label {
             margin-top: 10px;
-            color: #666;
+            color: #654321;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 1.8em;
+                font-size: 2em;
             }
 
             .cell {
-                font-size: 2em;
+                font-size: 2.2em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 3 en Raya</h1>
+        <h1>🎲 3 en Raya 🎲</h1>
+
 
         <div class="tabs">
             <button class="tab active" onclick="showTab('nuevo-jugador', this)">Nuevo Jugador</button>
@@ -736,3 +787,4 @@
     </script>
 </body>
 </html>
+
